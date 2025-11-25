@@ -5,6 +5,7 @@ from mercadolibre.client import MeliToken
 
 from my_auth.models import Token, MeliUser
 from my_auth.meli import get_user_info
+from questions.services import fetch_and_save_questions_from_meli
 
 
 def save_token(token: MeliToken):
@@ -36,4 +37,7 @@ def register_user(token: MeliToken) -> MeliUser:
             id=user_info.id,
             user=user,
         )
+
+    fetch_and_save_questions_from_meli(meli_user, token)
+
     return meli_user

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguntas - MercadoLibre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px 40px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .questions-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .question-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-UNANSWERED {
+            background: #ffe066;
+            color: #333;
+        }
+
+        .status-ANSWERED {
+            background: #51cf66;
+            color: white;
+        }
+
+        .status-CLOSED_UNANSWERED {
+            background: #868e96;
+            color: white;
+        }
+
+        .status-UNDER_REVIEW {
+            background: #339af0;
+            color: white;
+        }
+
+        .status-BANNED {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .answer-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .answer-label {
+            font-weight: 600;
+            color: #51cf66;
+            margin-bottom: 8px;
+        }
+
+        .answer-text {
+            color: #495057;
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #666;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Preguntas del último mes</h1>
+            <a href="{% url 'home' %}" class="back-btn">← Volver al inicio</a>
+        </div>
+
+        {% if questions %}
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ questions.count }}</div>
+                    <div class="stat-label">Total de preguntas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ questions|length }}</div>
+                    <div class="stat-label">Mostrando</div>
+                </div>
+            </div>
+
+            <div class="questions-grid">
+                {% for question in questions %}
+                <div class="question-card">
+                    <div class="question-header">
+                        <div>
+                            <div style="color: #999; font-size: 12px; margin-bottom: 5px;">
+                                ID: {{ question.id }} | Item: {{ question.item_id }}
+                            </div>
+                        </div>
+                        <span class="question-status status-{{ question.status }}">
+                            {{ question.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="question-text">
+                        {{ question.text }}
+                    </div>
+
+                    {% if question.answer_text %}
+                    <div class="answer-section">
+                        <div class="answer-label">✓ Tu respuesta:</div>
+                        <div class="answer-text">{{ question.answer_text }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="question-meta">
+                        <div class="meta-item">
+                            <span>📅</span>
+                            <span>{{ question.date_created|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>👤</span>
+                            <span>Usuario: {{ question.from_user_id }}</span>
+                        </div>
+                        {% if question.answer_date_created %}
+                        <div class="meta-item">
+                            <span>✓</span>
+                            <span>Respondida: {{ question.answer_date_created|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">💬</div>
+                <div class="empty-title">No hay preguntas</div>
+                <div class="empty-text">No tienes preguntas en el último mes</div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

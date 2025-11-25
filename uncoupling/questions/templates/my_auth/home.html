@@ -1,0 +1,11 @@
+{% extends 'my_auth/home.html' %}
+
+{% block menu %}
+                        <a href="{% url 'questions:list' %}" class="menu-item">
+                            <div class="menu-icon">💬</div>
+                            <div class="menu-item-content">
+                                <div class="menu-item-title">Preguntas</div>
+                                <div class="menu-item-description">Ver preguntas del último mes</div>
+                            </div>
+                        </a>
+{% endblock menu %}

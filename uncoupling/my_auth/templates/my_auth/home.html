@@ -125,6 +125,64 @@
         .logout-btn:active {
             transform: translateY(0);
         }
+
+        .menu-section {
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .menu-title {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .menu-icon {
+            font-size: 32px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .menu-item-content {
+            text-align: left;
+        }
+
+        .menu-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .menu-item-description {
+            font-size: 14px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +197,15 @@
                 <div class="nickname">{{ user.username }}</div>
             </div>
             <p style="color: #666; font-size: 14px; margin-bottom: 30px;">Estás conectado con MercadoLibre</p>
+
+            <div class="menu-section">
+                <h3 class="menu-title">Menú</h3>
+                <div class="menu-grid">
+                    {% block menu %}
+                    {% endblock menu %}
+                </div>
+            </div>
+
             <a href="{% url 'auth:logout' %}" class="logout-btn">
                 <svg class="meli-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
