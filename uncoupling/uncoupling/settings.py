@@ -11,21 +11,26 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sd5r7%%tchx#!54j1ho%m5ohp8+h@5xcf&8%(g_sah&p19j9%p'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sd5r7%%tchx#!54j1ho%m5ohp8+h@5xcf&8%(g_sah&p19j9%p')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'my_auth',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +127,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# MercadoLibre OAuth Settings
+MELI_CLIENT_ID = os.getenv('MELI_CLIENT_ID')
+MELI_CLIENT_SECRET = os.getenv('MELI_CLIENT_SECRET')
+MELI_REDIRECT_URI = os.getenv('MELI_REDIRECT_URI')
