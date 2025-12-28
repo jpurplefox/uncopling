@@ -23,11 +23,12 @@ class MeliQuestion(BaseModel):
 
 
 def get_questions_from_meli(token: MeliToken):
-    client = MeliClient(token)
+    client = MeliClient()
 
     response = client.get(
         f'/questions/search?seller_id={token.user_id}'
-        f'&sort_fields=date_created'
+        f'&sort_fields=date_created',
+        token
     )
     data = response.json()
 

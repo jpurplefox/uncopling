@@ -13,8 +13,17 @@ class MeliUserInfo(BaseModel):
     last_name: Optional[str]
 
 
-def get_user_info(token: MeliToken) -> MeliUserInfo:
-    client = MeliClient(token)
-    response = client.get('/users/me')
-    user_info = response.json()
-    return MeliUserInfo(**user_info)
+class MeliUserService:
+    def __init__(self, meli_client: MeliClient):
+        self.meli_client = meli_client
+
+    def get_login_url(self):
+        return self.meli_client.get_login_url()
+
+    def get_token(self, code: str) -> MeliToken:
+        return self.meli_client.get_token(code)
+
+    def get_user_info(self, token: MeliToken) -> MeliUserInfo:
+        response = self.meli_client.get('/users/me', token)
+        user_info = response.json()
+        return MeliUserInfo(**user_info)
