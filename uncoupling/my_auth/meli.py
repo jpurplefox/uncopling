@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from mercadolibre.client import MeliClient, MeliToken
+from mercadolibre.clients import MeliClient, MeliToken
 
 
 class MeliUserInfo(BaseModel):

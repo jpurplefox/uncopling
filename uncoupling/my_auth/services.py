@@ -6,7 +6,7 @@ from django.http import HttpRequest
 from django.contrib.auth import login as django_login, logout as django_logout
 from django.dispatch import Signal
 
-from mercadolibre.client import MeliToken
+from mercadolibre.clients import MeliToken
 
 from my_auth.models import Token, MeliUser
 from my_auth.meli import MeliUserService

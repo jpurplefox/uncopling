@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 from pydantic import BaseModel, Field
 
-from mercadolibre.client import MeliClient, MeliToken
+from mercadolibre.clients import MeliClient, MeliToken
 from questions.models import Question
 from my_auth.models import MeliUser
 

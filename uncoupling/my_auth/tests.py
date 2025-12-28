@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import User
 
-from mercadolibre.client import MeliToken
+from mercadolibre.clients import MeliToken
 
 from my_auth.views import meli_login, meli_callback, meli_logout
 from my_auth.models import MeliUser
