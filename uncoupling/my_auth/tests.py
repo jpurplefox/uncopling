@@ -1,11 +1,10 @@
-from unittest.mock import Mock
 from datetime import datetime, timezone
+from unittest.mock import Mock
 
 import pytest
 from django.contrib.auth.models import User
 
 from mercadolibre.clients import MeliToken
-
 from my_auth.views import meli_login, meli_callback, meli_logout
 from my_auth.models import MeliUser
 from my_auth.services import MeliAuthService
@@ -14,40 +13,9 @@ from my_auth.containers import auth_container
 from my_auth.meli import MeliUserInfo
 
 
-class InMemoryUserRepository:
-    """In-memory implementation of UserRepository for testing"""
-
-    def __init__(self):
-        self._users = {}
-        self._tokens = {}
-
-    def get_by_id(self, user_id: int) -> MeliUser:
-        if user_id not in self._users:
-            raise MeliUser.DoesNotExist
-        return self._users[user_id]
-
-    def create(self, username: str, email: str, first_name: str, last_name: str, meli_user_id: int) -> MeliUser:
-        django_user = User(
-            username=username,
-            email=email,
-            first_name=first_name,
-            last_name=last_name
-        )
-        meli_user = MeliUser(
-            id=meli_user_id,
-            user=django_user
-        )
-        self._users[meli_user_id] = meli_user
-        return meli_user
-
-    def save_token(self, token: MeliToken) -> None:
-        self._tokens[token.user_id] = token
-
-
 class TestMeliLoginView:
-    def test_meli_login_redirects_to_meli_auth_url(self, rf):
+    def test_meli_login_redirects_to_meli_auth_url(self, rf, mock_auth_service):
         # Arrange
-        mock_auth_service = Mock()
         mock_auth_service.get_login_url.return_value = 'https://auth.mercadolibre.com.ar/authorization?test=params'
 
         with auth_container.auth_service.override(mock_auth_service):
@@ -63,19 +31,20 @@ class TestMeliLoginView:
 
 
 class TestMeliCallbackView:
-    def test_meli_callback_handles_successful_authentication(self, rf):
+    def test_meli_callback_handles_successful_authentication(
+        self,
+        rf,
+        mock_auth_service,
+        mock_session_authenticator
+    ):
         # Arrange
-        mock_user = Mock(spec=User)
-        mock_meli_user = Mock(spec=MeliUser)
-        mock_meli_user.user = mock_user
+        user = User(username='testuser', email='test@example.com')
+        meli_user = MeliUser(id=12345, user=user)
 
-        mock_auth_service = Mock()
-        mock_auth_service.handle_callback.return_value = mock_meli_user
-
-        mock_session_auth = Mock()
+        mock_auth_service.handle_callback.return_value = meli_user
 
         with auth_container.auth_service.override(mock_auth_service), \
-                auth_container.session_authenticator.override(mock_session_auth):
+                auth_container.session_authenticator.override(mock_session_authenticator):
             request = rf.get('/auth/callback', {'code': 'test_code_123'})
 
             # Act
@@ -83,14 +52,12 @@ class TestMeliCallbackView:
 
             # Assert
             mock_auth_service.handle_callback.assert_called_once_with('test_code_123')
-            mock_session_auth.authenticate_session.assert_called_once_with(request, mock_user)
+            mock_session_authenticator.authenticate_session.assert_called_once_with(request, user)
             assert response.status_code == 302
             assert response.url == '/'
 
-    def test_meli_callback_returns_error_when_code_is_missing(self, rf):
+    def test_meli_callback_returns_error_when_code_is_missing(self, rf, mock_auth_service):
         # Arrange
-        mock_auth_service = Mock()
-
         with auth_container.auth_service.override(mock_auth_service):
             request = rf.get('/auth/callback')
 
@@ -103,10 +70,8 @@ class TestMeliCallbackView:
 
 
 class TestMeliLogoutView:
-    def test_meli_logout_terminates_session_and_redirects(self, rf):
+    def test_meli_logout_terminates_session_and_redirects(self, rf, mock_session_terminator):
         # Arrange
-        mock_session_terminator = Mock()
-
         with auth_container.session_terminator.override(mock_session_terminator):
             request = rf.get('/auth/logout')
 
@@ -120,12 +85,13 @@ class TestMeliLogoutView:
 
 
 class TestMeliAuthService:
-    def test_handle_callback_registers_new_user_when_not_exists(self):
+    def test_handle_callback_registers_new_user_when_not_exists(
+        self,
+        user_repository,
+        mock_meli_user_service,
+        mock_event_dispatcher
+    ):
         # Arrange
-        mock_event_dispatcher = Mock()
-        user_repository = InMemoryUserRepository()
-        mock_meli_user_service = Mock()
-
         token = MeliToken(
             user_id=12345,
             access_token='test_access',
@@ -160,13 +126,13 @@ class TestMeliAuthService:
         assert created_user.user.email == 'test@example.com'
         assert result == created_user
 
-    def test_handle_callback_updates_token_when_user_exists(self):
+    def test_handle_callback_updates_token_when_user_exists(
+        self,
+        user_repository,
+        mock_meli_user_service,
+        mock_event_dispatcher
+    ):
         # Arrange
-        mock_event_dispatcher = Mock()
-        user_repository = InMemoryUserRepository()
-        mock_meli_user_service = Mock()
-
-        # Create existing user in repository
         existing_user = user_repository.create(
             username='existinguser',
             email='existing@example.com',
@@ -175,7 +141,6 @@ class TestMeliAuthService:
             meli_user_id=67890
         )
 
-        # Save old token
         old_token = MeliToken(
             user_id=67890,
             access_token='old_access_token',
@@ -184,7 +149,6 @@ class TestMeliAuthService:
         )
         user_repository.save_token(old_token)
 
-        # New token for the same user
         new_token = MeliToken(
             user_id=67890,
             access_token='new_access_token',
@@ -205,19 +169,18 @@ class TestMeliAuthService:
 
         # Assert
         assert result == existing_user
-        # Verify the token was updated
         updated_token = user_repository._tokens[67890]
         assert updated_token.access_token == 'new_access_token'
         assert updated_token.refresh_token == 'new_refresh_token'
-        # Verify user info was not fetched (user already existed)
         mock_meli_user_service.get_user_info.assert_not_called()
 
-    def test_handle_callback_dispatches_user_registered_event_for_new_user(self):
+    def test_handle_callback_dispatches_user_registered_event_for_new_user(
+        self,
+        user_repository,
+        mock_meli_user_service,
+        mock_event_dispatcher
+    ):
         # Arrange
-        mock_event_dispatcher = Mock()
-        user_repository = InMemoryUserRepository()
-        mock_meli_user_service = Mock()
-
         token = MeliToken(
             user_id=12345,
             access_token='test_access',
