@@ -4,6 +4,7 @@ from django.db import transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.contrib.auth import login as django_login, logout as django_logout
+from django.dispatch import Signal
 
 from mercadolibre.client import MeliToken
 
@@ -53,6 +54,16 @@ class DjangoSessionManager:
         django_logout(request)
 
 
+class DjangoSignalEventDispatcher:
+    """Concrete implementation for event dispatching using Django signals.
+    Implements the EventDispatcher protocol.
+    """
+
+    def dispatch(self, signal: Signal, sender: type, **kwargs) -> None:
+        """Dispatch an event using Django's signal system"""
+        signal.send(sender=sender, **kwargs)
+
+
 class LoginUrlProvider(Protocol):
     def get_login_url(self) -> str:
         ...
@@ -77,10 +88,30 @@ class SessionTerminator(Protocol):
         ...
 
 
+class EventDispatcher(Protocol):
+    """Protocol for dispatching events/signals"""
+    def dispatch(self, signal: Signal, sender: type, **kwargs) -> None:
+        """
+        Dispatch an event using the given signal.
+
+        Args:
+            signal: The Django Signal to dispatch
+            sender: The sender of the signal (typically a model class)
+            **kwargs: Arbitrary keyword arguments to pass to signal receivers
+        """
+        ...
+
+
 class MeliAuthService:
-    def __init__(self, user_repository: UserRepository, meli_user_service: MeliUserService):
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        meli_user_service: MeliUserService,
+        event_dispatcher: EventDispatcher
+    ):
         self.user_repository = user_repository
         self.meli_user_service = meli_user_service
+        self.event_dispatcher = event_dispatcher
 
     def get_login_url(self) -> str:
         return self.meli_user_service.get_login_url()
@@ -122,6 +153,6 @@ class MeliAuthService:
             meli_user_id=user_info.id,
         )
 
-        user_registered.send(sender=MeliUser, meli_user=meli_user, token=token)
+        self.event_dispatcher.dispatch(user_registered, sender=MeliUser, meli_user=meli_user, token=token)
 
         return meli_user
