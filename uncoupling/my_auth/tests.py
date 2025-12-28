@@ -221,11 +221,18 @@ class MeliAuthServiceTest(TestCase):
         # Verify user info was not fetched (user already existed)
         mock_meli_user_service.get_user_info.assert_not_called()
 
-    def test_register_user_dispatches_user_registered_event(self):
+    def test_handle_callback_dispatches_user_registered_event_for_new_user(self):
         # Arrange
         mock_event_dispatcher = Mock()
         user_repository = InMemoryUserRepository()
         mock_meli_user_service = Mock()
+
+        token = MeliToken(
+            user_id=12345,
+            access_token='test_access',
+            refresh_token='test_refresh',
+            expires_at=datetime.now(timezone.utc)
+        )
 
         user_info = MeliUserInfo(
             id=12345,
@@ -235,14 +242,8 @@ class MeliAuthServiceTest(TestCase):
             last_name='User'
         )
 
+        mock_meli_user_service.get_token.return_value = token
         mock_meli_user_service.get_user_info.return_value = user_info
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         service = MeliAuthService(
             user_repository=user_repository,
@@ -251,7 +252,7 @@ class MeliAuthServiceTest(TestCase):
         )
 
         # Act
-        result = service.register_user(token)
+        result = service.handle_callback('test_code')
 
         # Assert
         created_user = user_repository.get_by_id(12345)

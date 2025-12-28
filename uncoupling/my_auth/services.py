@@ -140,12 +140,12 @@ class MeliAuthService:
         try:
             meli_user = self.user_repository.get_by_id(token.user_id)
         except MeliUser.DoesNotExist:
-            meli_user = self.register_user(token)
+            meli_user = self._register_user(token)
 
         self.user_repository.save_token(token)
         return meli_user
 
-    def register_user(self, token: MeliToken) -> MeliUser:
+    def _register_user(self, token: MeliToken) -> MeliUser:
         user_info = self.meli_user_service.get_user_info(token)
 
         meli_user = self.user_repository.create(
