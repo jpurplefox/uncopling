@@ -26,4 +26,5 @@ jobs:
 
     - name: Run mypy
       run: |
-        mypy uncoupling --config-file uncoupling/pyproject.toml
+        cd uncoupling
+        mypy . --config-file pyproject.toml
