@@ -4,3 +4,10 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "uncoupling.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "uncoupling.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
