@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, Optional
 
 from django.db import transaction
 from django.contrib.auth.models import User
@@ -151,8 +151,8 @@ class MeliAuthService:
         meli_user = self.user_repository.create(
             username=user_info.nickname,
             email=user_info.email,
-            first_name=user_info.first_name,
-            last_name=user_info.last_name,
+            first_name=user_info.first_name or '',
+            last_name=user_info.last_name or '',
             meli_user_id=user_info.id,
         )
 

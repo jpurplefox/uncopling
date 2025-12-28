@@ -40,7 +40,7 @@ def meli_callback(
             {'error': form.errors.as_json()},
             status=400
         )
-    code = form.cleaned_data.get('code')
+    code = form.cleaned_data['code']
 
     meli_user = callback_handler.handle_callback(code)
     session_auth.authenticate_session(request, meli_user.user)
