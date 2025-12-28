@@ -20,6 +20,9 @@ class UserRepository(Protocol):
     def create(self, username: str, email: str, first_name: str, last_name: str, meli_user_id: int) -> MeliUser:
         ...
 
+    def save_token(self, token: MeliToken) -> None:
+        ...
+
 
 class DBUserRepository:
     def get_by_id(self, user_id: int) -> MeliUser:
@@ -38,6 +41,21 @@ class DBUserRepository:
                 user=user,
             )
         return meli_user
+
+    def save_token(self, token: MeliToken) -> None:
+        instance, created = Token.objects.get_or_create(
+            meli_user_id=token.user_id,
+            defaults={
+                'access_token': token.access_token,
+                'refresh_token': token.refresh_token,
+                'expires_at': token.expires_at,
+            }
+        )
+        if not created:
+            instance.access_token = token.access_token
+            instance.refresh_token = token.refresh_token
+            instance.expires_at = token.expires_at
+            instance.save()
 
 
 class DjangoSessionManager:
@@ -124,23 +142,8 @@ class MeliAuthService:
         except MeliUser.DoesNotExist:
             meli_user = self.register_user(token)
 
-        self.save_token(token)
+        self.user_repository.save_token(token)
         return meli_user
-
-    def save_token(self, token: MeliToken):
-        instance, created = Token.objects.get_or_create(
-            meli_user_id=token.user_id,
-            defaults={
-                'access_token': token.access_token,
-                'refresh_token': token.refresh_token,
-                'expires_at': token.expires_at,
-            }
-        )
-        if not created:
-            instance.access_token = token.access_token
-            instance.refresh_token = token.refresh_token
-            instance.expires_at = token.expires_at
-            instance.save()
 
     def register_user(self, token: MeliToken) -> MeliUser:
         user_info = self.meli_user_service.get_user_info(token)
