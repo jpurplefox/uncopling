@@ -1,7 +1,11 @@
 from dependency_injector import containers, providers
 
 from mercadolibre.containers import MeliContainer
-from my_auth.services import MeliAuthService, DBUserRepository
+from my_auth.services import (
+    MeliAuthService,
+    DBUserRepository,
+    DjangoSessionManager,
+)
 from my_auth.meli import MeliUserService
 
 
@@ -22,6 +26,11 @@ class AuthContainer(containers.DeclarativeContainer):
         user_repository=user_repository,
         meli_user_service=meli_user_service
     )
+
+    # Session management services - single instance provides both protocols
+    session_manager = providers.Singleton(DjangoSessionManager)
+    session_authenticator = session_manager
+    session_terminator = session_manager
 
 
 auth_container = AuthContainer()

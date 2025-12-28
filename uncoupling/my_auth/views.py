@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from dependency_injector.wiring import Provide, inject
 
 from my_auth.forms import MeliCallbackForm
-from my_auth.services import LoginUrlProvider, CallbackHandler
+from my_auth.services import (
+    LoginUrlProvider,
+    CallbackHandler,
+    SessionAuthenticator,
+    SessionTerminator,
+)
 from my_auth.containers import AuthContainer
 
 
@@ -26,7 +30,8 @@ def meli_login(
 @inject
 def meli_callback(
     request,
-    callback_handler: CallbackHandler = Provide[AuthContainer.auth_service]
+    callback_handler: CallbackHandler = Provide[AuthContainer.auth_service],
+    session_auth: SessionAuthenticator = Provide[AuthContainer.session_authenticator]
 ):
     """Handle MercadoLibre OAuth callback"""
     form = MeliCallbackForm(request.GET)
@@ -38,12 +43,16 @@ def meli_callback(
     code = form.cleaned_data.get('code')
 
     meli_user = callback_handler.handle_callback(code)
-    login(request, meli_user.user)
+    session_auth.authenticate_session(request, meli_user.user)
 
     return redirect('/')
 
 
-def meli_logout(request):
+@inject
+def meli_logout(
+    request,
+    session_terminator: SessionTerminator = Provide[AuthContainer.session_terminator]
+):
     """Logout user from the application"""
-    logout(request)
+    session_terminator.terminate_session(request)
     return redirect('/')

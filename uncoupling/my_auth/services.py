@@ -2,6 +2,8 @@ from typing import Protocol
 
 from django.db import transaction
 from django.contrib.auth.models import User
+from django.http import HttpRequest
+from django.contrib.auth import login as django_login, logout as django_logout
 
 from mercadolibre.client import MeliToken
 
@@ -37,6 +39,20 @@ class DBUserRepository:
         return meli_user
 
 
+class DjangoSessionManager:
+    """Concrete implementation for session management using Django's built-in auth.
+    Implements both SessionAuthenticator and SessionTerminator protocols.
+    """
+
+    def authenticate_session(self, request: HttpRequest, user: User) -> None:
+        """Authenticate user using Django's session-based auth"""
+        django_login(request, user)
+
+    def terminate_session(self, request: HttpRequest) -> None:
+        """Terminate session using Django's logout"""
+        django_logout(request)
+
+
 class LoginUrlProvider(Protocol):
     def get_login_url(self) -> str:
         ...
@@ -44,6 +60,20 @@ class LoginUrlProvider(Protocol):
 
 class CallbackHandler(Protocol):
     def handle_callback(self, code: str) -> MeliUser:
+        ...
+
+
+class SessionAuthenticator(Protocol):
+    """Protocol for authenticating a user in the current session"""
+    def authenticate_session(self, request: HttpRequest, user: User) -> None:
+        """Authenticate the user in the current session"""
+        ...
+
+
+class SessionTerminator(Protocol):
+    """Protocol for terminating the current user session"""
+    def terminate_session(self, request: HttpRequest) -> None:
+        """Terminate/logout the current user session"""
         ...
 
 
