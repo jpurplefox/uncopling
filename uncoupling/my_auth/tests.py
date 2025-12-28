@@ -85,6 +85,28 @@ class TestMeliLogoutView:
 
 
 class TestMeliAuthService:
+    def test_get_login_url_delegates_to_meli_user_service(
+        self,
+        user_repository,
+        mock_meli_user_service,
+        mock_event_dispatcher
+    ):
+        # Arrange
+        mock_meli_user_service.get_login_url.return_value = 'https://auth.mercadolibre.com.ar/authorization'
+
+        service = MeliAuthService(
+            user_repository=user_repository,
+            meli_user_service=mock_meli_user_service,
+            event_dispatcher=mock_event_dispatcher
+        )
+
+        # Act
+        url = service.get_login_url()
+
+        # Assert
+        assert url == 'https://auth.mercadolibre.com.ar/authorization'
+        mock_meli_user_service.get_login_url.assert_called_once()
+
     def test_handle_callback_registers_new_user_when_not_exists(
         self,
         user_repository,

@@ -9,3 +9,8 @@ venv
 *.pem
 cert.pem
 key.pem
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
