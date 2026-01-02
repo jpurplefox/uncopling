@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
-from my_auth.meli import MeliUserInfo, MeliUserService
+from my_auth.meli import MeliUserInfo, MeliOAuthProvider
 from my_auth.services import (
     EventDispatcher,
     SessionAuthenticator,
@@ -62,7 +62,7 @@ def mock_event_dispatcher():
 
 @pytest.fixture
 def mock_meli_user_service():
-    return create_autospec(MeliUserService, instance=True)
+    return create_autospec(MeliOAuthProvider, instance=True)
 
 
 @pytest.fixture

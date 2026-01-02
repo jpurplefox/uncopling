@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Protocol
 
 from pydantic import BaseModel
 
@@ -11,6 +11,22 @@ class MeliUserInfo(BaseModel):
     nickname: str
     first_name: Optional[str]
     last_name: Optional[str]
+
+
+class MeliOAuthProvider(Protocol):
+    """Protocol for MercadoLibre OAuth and user operations"""
+
+    def get_login_url(self) -> str:
+        """Get the OAuth authorization URL"""
+        ...
+
+    def get_token(self, code: str) -> MeliToken:
+        """Exchange authorization code for access token"""
+        ...
+
+    def get_user_info(self, token: MeliToken) -> MeliUserInfo:
+        """Get user information from MercadoLibre API"""
+        ...
 
 
 class MeliUserService:

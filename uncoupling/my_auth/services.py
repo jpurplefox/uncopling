@@ -9,7 +9,7 @@ from django.dispatch import Signal
 from mercadolibre.clients import MeliToken
 
 from my_auth.models import Token, MeliUser
-from my_auth.meli import MeliUserService
+from my_auth.meli import MeliOAuthProvider
 from my_auth.signals import user_registered
 
 
@@ -124,7 +124,7 @@ class MeliAuthService:
     def __init__(
         self,
         user_repository: UserRepository,
-        meli_user_service: MeliUserService,
+        meli_user_service: MeliOAuthProvider,
         event_dispatcher: EventDispatcher
     ):
         self.user_repository = user_repository
