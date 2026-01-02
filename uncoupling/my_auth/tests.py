@@ -68,6 +68,18 @@ class TestMeliCallbackView:
             assert response.status_code == 400
             mock_auth_service.handle_callback.assert_not_called()
 
+    def test_meli_callback_returns_error_when_authorization_fails(self, rf, mock_auth_service):
+        # Arrange
+        with auth_container.auth_service.override(mock_auth_service):
+            request = rf.get('/auth/callback', {'error': 'access_denied'})
+
+            # Act
+            response = meli_callback(request)
+
+            # Assert
+            assert response.status_code == 400
+            mock_auth_service.handle_callback.assert_not_called()
+
 
 class TestMeliLogoutView:
     def test_meli_logout_terminates_session_and_redirects(self, rf, mock_session_terminator):
