@@ -1,15 +1,19 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from datetime import timedelta
-from .models import Question
+from dependency_injector.wiring import inject, Provide
+
+from questions.containers import QuestionContainer
+from questions.services import QuestionRepository
 
 
 @login_required
-def questions_list(request):
-    questions = Question.objects.filter(
-        meli_user=request.user.meliuser,
-    )
+@inject
+def questions_list(
+    request,
+    question_repository: QuestionRepository = Provide[QuestionContainer.question_repository]
+):
+    """Display list of questions for the authenticated user"""
+    questions = question_repository.get_by_user(request.user.meliuser)
     return render(request, 'questions/questions_list.html', {
         'questions': questions
     })
