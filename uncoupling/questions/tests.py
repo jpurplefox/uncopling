@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 import pytest
 from django.contrib.auth.models import User
 
-from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
 from questions.services import (
     QuestionSyncService,
@@ -16,18 +15,12 @@ class TestQuestionSyncService:
     def test_sync_questions_saves_answered_question(
         self,
         question_repository,
-        mock_meli_gateway
+        mock_meli_gateway,
+        sample_token
     ):
         # Arrange
         django_user = User(username='testuser', email='test@example.com')
         meli_user = MeliUser(id=12345, user=django_user)
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         meli_question = MeliQuestion(**{
             'id': 111,
@@ -50,7 +43,7 @@ class TestQuestionSyncService:
         )
 
         # Act
-        count = service.sync_questions(meli_user, token)
+        count = service.sync_questions(meli_user, sample_token)
 
         # Assert
         assert count == 1
@@ -69,18 +62,12 @@ class TestQuestionSyncService:
     def test_sync_questions_saves_unanswered_question(
         self,
         question_repository,
-        mock_meli_gateway
+        mock_meli_gateway,
+        sample_token
     ):
         # Arrange
         django_user = User(username='testuser', email='test@example.com')
         meli_user = MeliUser(id=12345, user=django_user)
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         meli_question = MeliQuestion(**{
             'id': 222,
@@ -100,7 +87,7 @@ class TestQuestionSyncService:
         )
 
         # Act
-        count = service.sync_questions(meli_user, token)
+        count = service.sync_questions(meli_user, sample_token)
 
         # Assert
         assert count == 1
@@ -117,18 +104,12 @@ class TestQuestionSyncService:
     def test_sync_questions_saves_multiple_questions(
         self,
         question_repository,
-        mock_meli_gateway
+        mock_meli_gateway,
+        sample_token
     ):
         # Arrange
         django_user = User(username='testuser', email='test@example.com')
         meli_user = MeliUser(id=12345, user=django_user)
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         questions = [
             MeliQuestion(**{
@@ -168,7 +149,7 @@ class TestQuestionSyncService:
         )
 
         # Act
-        count = service.sync_questions(meli_user, token)
+        count = service.sync_questions(meli_user, sample_token)
 
         # Assert
         assert count == 3
@@ -178,18 +159,12 @@ class TestQuestionSyncService:
     def test_sync_questions_returns_zero_when_no_questions(
         self,
         question_repository,
-        mock_meli_gateway
+        mock_meli_gateway,
+        sample_token
     ):
         # Arrange
         django_user = User(username='testuser', email='test@example.com')
         meli_user = MeliUser(id=12345, user=django_user)
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         mock_meli_gateway.get_questions.return_value = []
 
@@ -199,7 +174,7 @@ class TestQuestionSyncService:
         )
 
         # Act
-        count = service.sync_questions(meli_user, token)
+        count = service.sync_questions(meli_user, sample_token)
 
         # Assert
         assert count == 0
@@ -209,18 +184,12 @@ class TestQuestionSyncService:
     def test_sync_questions_calls_gateway_with_token(
         self,
         question_repository,
-        mock_meli_gateway
+        mock_meli_gateway,
+        sample_token
     ):
         # Arrange
         django_user = User(username='testuser', email='test@example.com')
         meli_user = MeliUser(id=12345, user=django_user)
-
-        token = MeliToken(
-            user_id=12345,
-            access_token='test_access',
-            refresh_token='test_refresh',
-            expires_at=datetime.now(timezone.utc)
-        )
 
         mock_meli_gateway.get_questions.return_value = []
 
@@ -230,7 +199,7 @@ class TestQuestionSyncService:
         )
 
         # Act
-        service.sync_questions(meli_user, token)
+        service.sync_questions(meli_user, sample_token)
 
         # Assert
-        mock_meli_gateway.get_questions.assert_called_once_with(token)
+        mock_meli_gateway.get_questions.assert_called_once_with(sample_token)

@@ -5,11 +5,12 @@ conftest.py is automatically discovered by pytest and makes fixtures
 available to all test files in this directory.
 """
 from unittest.mock import create_autospec
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from django.contrib.auth.models import User
 
+from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
 from questions.models import Question
 from questions.services import MeliQuestionGateway
@@ -62,3 +63,14 @@ def question_repository():
 @pytest.fixture
 def mock_meli_gateway():
     return create_autospec(MeliQuestionGateway, instance=True)
+
+
+@pytest.fixture
+def sample_token():
+    """Sample MeliToken for testing"""
+    return MeliToken(
+        user_id=12345,
+        access_token='test_access',
+        refresh_token='test_refresh',
+        expires_at=datetime.now(timezone.utc)
+    )
