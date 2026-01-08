@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
 from questions.models import Question
-from questions.services import MeliQuestionGateway
+from questions.meli import MeliQuestionGateway
 
 
 class InMemoryQuestionRepository:

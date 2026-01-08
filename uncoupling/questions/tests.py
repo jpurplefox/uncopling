@@ -4,11 +4,8 @@ import pytest
 from django.contrib.auth.models import User
 
 from my_auth.models import MeliUser
-from questions.services import (
-    QuestionSyncService,
-    MeliQuestion,
-    MeliAnswer,
-)
+from questions.services import QuestionSyncService
+from questions.meli import MeliQuestion, MeliAnswer
 
 
 class TestQuestionSyncService:

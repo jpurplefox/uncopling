@@ -1,11 +1,9 @@
 from dependency_injector import containers, providers
 
 from mercadolibre.containers import MeliContainer
-from questions.services import (
-    DBQuestionRepository,
-    MeliQuestionAPIGateway,
-    QuestionSyncService,
-)
+from questions.repositories import DBQuestionRepository
+from questions.meli import MeliQuestionAPIGateway
+from questions.services import QuestionSyncService
 
 
 class QuestionContainer(containers.DeclarativeContainer):

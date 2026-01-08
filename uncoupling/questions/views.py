@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from dependency_injector.wiring import inject, Provide
 
 from questions.containers import QuestionContainer
-from questions.services import QuestionRepository
+from questions.repositories import QuestionRepository
 
 
 @login_required
