@@ -11,7 +11,7 @@ import pytest
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
-from orders.services import MeliOrderGateway
+from orders.meli import MeliOrderGateway
 from orders.repositories import OrderData
 
 

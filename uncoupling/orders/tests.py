@@ -5,10 +5,8 @@ import pytest
 from django.contrib.auth.models import User
 
 from my_auth.models import MeliUser
-from orders.services import (
-    OrderSyncService,
-    MeliOrder,
-)
+from orders.services import OrderSyncService
+from orders.meli import MeliOrder
 
 
 class TestOrderSyncService:
