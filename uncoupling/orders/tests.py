@@ -210,7 +210,7 @@ class TestOrderSyncService:
 
     def test_order_data_get_total_items(self):
         """Test that OrderData.get_total_items() calculates correctly"""
-        from orders.services import OrderData, OrderItemData
+        from orders.repositories import OrderData, OrderItemData
 
         order = OrderData(
             id=1,

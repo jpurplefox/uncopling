@@ -1,8 +1,8 @@
 from dependency_injector import containers, providers
 
 from mercadolibre.containers import MeliContainer
+from orders.repositories import DBOrderRepository
 from orders.services import (
-    DBOrderRepository,
     MeliOrderAPIGateway,
     OrderSyncService,
 )

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from dependency_injector.wiring import inject, Provide
 
 from orders.containers import OrderContainer
-from orders.services import OrderRepository
+from orders.repositories import OrderRepository
 
 
 @login_required
