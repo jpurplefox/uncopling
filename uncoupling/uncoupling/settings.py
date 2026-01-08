@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'questions',
     'my_auth',
+    'orders',
 ]
 
 MIDDLEWARE = [

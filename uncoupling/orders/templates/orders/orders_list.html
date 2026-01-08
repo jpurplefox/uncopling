@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes - MercadoLibre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px 40px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .orders-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .order-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-paid { background: #51cf66; color: white; }
+        .status-confirmed { background: #339af0; color: white; }
+        .status-payment_required { background: #ffe066; color: #333; }
+        .status-payment_in_process { background: #ffa94d; color: white; }
+        .status-cancelled { background: #ff6b6b; color: white; }
+        .status-invalid { background: #868e96; color: white; }
+
+        .buyer-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .buyer-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .buyer-info {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .items-section {
+            margin-bottom: 15px;
+        }
+
+        .items-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            color: #333;
+            flex: 1;
+        }
+
+        .item-details {
+            color: #666;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .totals-section {
+            background: #e7f5ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .total-row.main {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding-top: 8px;
+            border-top: 2px solid #339af0;
+        }
+
+        .payments-section {
+            margin-bottom: 15px;
+        }
+
+        .payment-method {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #d0ebff;
+            color: #1864ab;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #666;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mis Órdenes</h1>
+            <a href="{% url 'home' %}" class="back-btn">← Volver al inicio</a>
+        </div>
+
+        {% if orders %}
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ orders|length }}</div>
+                    <div class="stat-label">Total de órdenes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% with paid_count=0 %}
+                            {% for order in orders %}
+                                {% if order.status == 'paid' or order.status == 'confirmed' %}
+                                    {% if forloop.first %}1{% else %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+                    <div class="stat-label">Pagadas/Confirmadas</div>
+                </div>
+            </div>
+
+            <div class="orders-grid">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">Orden #{{ order.id }}</div>
+                            <div style="color: #999; font-size: 12px; margin-top: 5px;">
+                                {{ order.get_total_items }} items
+                            </div>
+                        </div>
+                        <span class="order-status status-{{ order.status }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+
+                    <!-- Buyer Info -->
+                    <div class="buyer-section">
+                        <div class="buyer-title">👤 Comprador</div>
+                        <div class="buyer-info">
+                            <strong>{{ order.buyer_first_name }} {{ order.buyer_last_name }}</strong>
+                            {% if order.buyer_nickname %} (@{{ order.buyer_nickname }}){% endif %}<br>
+                            {% if order.buyer_email %}Email: {{ order.buyer_email }}<br>{% endif %}
+                            {% if order.buyer_phone %}Teléfono: {{ order.buyer_phone }}{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="items-section">
+                        <div class="items-title">📦 Productos</div>
+                        {% for item in order.order_items %}
+                        <div class="item">
+                            <div class="item-name">
+                                {{ item.title }}
+                            </div>
+                            <div class="item-details">
+                                {{ item.quantity }}x ${{ item.unit_price }} {{ item.currency_id }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="totals-section">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span>${{ order.total_amount }} {{ order.currency_id }}</span>
+                        </div>
+                        {% if order.paid_amount %}
+                        <div class="total-row">
+                            <span>Monto pagado:</span>
+                            <span>${{ order.paid_amount }} {{ order.currency_id }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="total-row main">
+                            <span>Total:</span>
+                            <span>${{ order.total_amount }} {{ order.currency_id }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Payments -->
+                    {% if order.payments %}
+                    <div class="payments-section">
+                        <div class="items-title">💳 Pagos</div>
+                        {% for payment in order.payments %}
+                        <span class="payment-method">
+                            {{ payment.payment_type|default:"No especificado" }} - {{ payment.status }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Metadata -->
+                    <div class="order-meta">
+                        <div class="meta-item">
+                            <span>📅</span>
+                            <span>Creada: {{ order.date_created|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        {% if order.date_closed %}
+                        <div class="meta-item">
+                            <span>✓</span>
+                            <span>Cerrada: {{ order.date_closed|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="meta-item">
+                            <span>🔄</span>
+                            <span>Actualizada: {{ order.last_updated|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <div class="empty-title">No hay órdenes</div>
+                <div class="empty-text">No tienes órdenes registradas</div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
