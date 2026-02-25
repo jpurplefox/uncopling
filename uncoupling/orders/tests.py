@@ -14,6 +14,7 @@ class TestOrderSyncService:
         self,
         order_repository,
         mock_meli_order_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -61,7 +62,8 @@ class TestOrderSyncService:
 
         service = OrderSyncService(
             order_repository=order_repository,
-            meli_gateway=mock_meli_order_gateway
+            meli_gateway=mock_meli_order_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -96,6 +98,7 @@ class TestOrderSyncService:
         self,
         order_repository,
         mock_meli_order_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -147,7 +150,8 @@ class TestOrderSyncService:
 
         service = OrderSyncService(
             order_repository=order_repository,
-            meli_gateway=mock_meli_order_gateway
+            meli_gateway=mock_meli_order_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -162,6 +166,7 @@ class TestOrderSyncService:
         self,
         order_repository,
         mock_meli_order_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -172,7 +177,8 @@ class TestOrderSyncService:
 
         service = OrderSyncService(
             order_repository=order_repository,
-            meli_gateway=mock_meli_order_gateway
+            meli_gateway=mock_meli_order_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -187,6 +193,7 @@ class TestOrderSyncService:
         self,
         order_repository,
         mock_meli_order_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -197,7 +204,8 @@ class TestOrderSyncService:
 
         service = OrderSyncService(
             order_repository=order_repository,
-            meli_gateway=mock_meli_order_gateway
+            meli_gateway=mock_meli_order_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act

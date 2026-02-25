@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
+from my_auth.services import EventDispatcher
 from questions.models import Question
 from questions.meli import MeliQuestionGateway
 
@@ -63,6 +64,11 @@ def question_repository():
 @pytest.fixture
 def mock_meli_gateway():
     return create_autospec(MeliQuestionGateway, instance=True)
+
+
+@pytest.fixture
+def mock_event_dispatcher():
+    return create_autospec(EventDispatcher, instance=True)
 
 
 @pytest.fixture

@@ -1,6 +1,7 @@
 from dependency_injector import containers, providers
 
 from mercadolibre.containers import MeliContainer
+from my_auth.services import DjangoSignalEventDispatcher
 from orders.repositories import DBOrderRepository
 from orders.meli import MeliOrderAPIGateway
 from orders.services import OrderSyncService
@@ -21,11 +22,15 @@ class OrderContainer(containers.DeclarativeContainer):
         meli_client=meli_container.meli_client
     )
 
+    # Event dispatching
+    event_dispatcher = providers.Singleton(DjangoSignalEventDispatcher)
+
     # Services
     order_sync_service = providers.Singleton(
         OrderSyncService,
         order_repository=order_repository,
-        meli_gateway=meli_order_gateway
+        meli_gateway=meli_order_gateway,
+        event_dispatcher=event_dispatcher,
     )
 
 

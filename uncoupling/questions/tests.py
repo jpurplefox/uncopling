@@ -13,6 +13,7 @@ class TestQuestionSyncService:
         self,
         question_repository,
         mock_meli_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -36,7 +37,8 @@ class TestQuestionSyncService:
 
         service = QuestionSyncService(
             question_repository=question_repository,
-            meli_gateway=mock_meli_gateway
+            meli_gateway=mock_meli_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -60,6 +62,7 @@ class TestQuestionSyncService:
         self,
         question_repository,
         mock_meli_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -80,7 +83,8 @@ class TestQuestionSyncService:
 
         service = QuestionSyncService(
             question_repository=question_repository,
-            meli_gateway=mock_meli_gateway
+            meli_gateway=mock_meli_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -102,6 +106,7 @@ class TestQuestionSyncService:
         self,
         question_repository,
         mock_meli_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -142,7 +147,8 @@ class TestQuestionSyncService:
 
         service = QuestionSyncService(
             question_repository=question_repository,
-            meli_gateway=mock_meli_gateway
+            meli_gateway=mock_meli_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -157,6 +163,7 @@ class TestQuestionSyncService:
         self,
         question_repository,
         mock_meli_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -167,7 +174,8 @@ class TestQuestionSyncService:
 
         service = QuestionSyncService(
             question_repository=question_repository,
-            meli_gateway=mock_meli_gateway
+            meli_gateway=mock_meli_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act
@@ -182,6 +190,7 @@ class TestQuestionSyncService:
         self,
         question_repository,
         mock_meli_gateway,
+        mock_event_dispatcher,
         sample_token
     ):
         # Arrange
@@ -192,7 +201,8 @@ class TestQuestionSyncService:
 
         service = QuestionSyncService(
             question_repository=question_repository,
-            meli_gateway=mock_meli_gateway
+            meli_gateway=mock_meli_gateway,
+            event_dispatcher=mock_event_dispatcher,
         )
 
         # Act

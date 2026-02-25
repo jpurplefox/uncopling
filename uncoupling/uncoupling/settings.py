@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'questions',
     'my_auth',
     'orders',
+    'notifications',
 ]
 
 MIDDLEWARE = [

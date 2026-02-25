@@ -4,9 +4,11 @@ from datetime import datetime
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
+from my_auth.services import EventDispatcher
 from questions.models import Question
 from questions.repositories import QuestionRepository
 from questions.meli import MeliQuestion, MeliQuestionGateway
+from questions.events import question_received
 
 
 logger = logging.getLogger(__name__)
@@ -18,10 +20,12 @@ class QuestionSyncService:
     def __init__(
         self,
         question_repository: QuestionRepository,
-        meli_gateway: MeliQuestionGateway
+        meli_gateway: MeliQuestionGateway,
+        event_dispatcher: EventDispatcher,
     ):
         self.question_repository = question_repository
         self.meli_gateway = meli_gateway
+        self.event_dispatcher = event_dispatcher
 
     def sync_questions(self, meli_user: MeliUser, token: MeliToken) -> int:
         """
@@ -48,7 +52,7 @@ class QuestionSyncService:
             answer_text = question.answer.text
             answer_date_created = self._parse_iso_datetime(question.answer.date_created)
 
-        return self.question_repository.save_or_update(
+        saved = self.question_repository.save_or_update(
             question_id=question.id,
             meli_user=meli_user,
             item_id=question.item_id,
@@ -59,6 +63,16 @@ class QuestionSyncService:
             answer_text=answer_text,
             answer_date_created=answer_date_created
         )
+
+        self.event_dispatcher.dispatch(
+            question_received,
+            sender=Question,
+            meli_user=meli_user,
+            question_id=question.id,
+            question_text=question.text,
+        )
+
+        return saved
 
     @staticmethod
     def _parse_iso_datetime(iso_string: str) -> datetime:
