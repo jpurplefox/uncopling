@@ -103,6 +103,7 @@ class NotificationSerializer(Protocol):
 
 class QuestionNotificationSerializer:
     def to_dto(self, notification: Notification) -> QuestionNotificationData:
+        assert notification.question_id is not None
         return QuestionNotificationData(
             id=notification.id,
             type=notification.type,
@@ -127,6 +128,7 @@ class QuestionNotificationSerializer:
 
 class OrderNotificationSerializer:
     def to_dto(self, notification: Notification) -> OrderNotificationData:
+        assert notification.order_id is not None
         return OrderNotificationData(
             id=notification.id,
             type=notification.type,
