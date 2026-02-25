@@ -11,6 +11,7 @@ import pytest
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
+from my_auth.services import EventDispatcher
 from orders.meli import MeliOrderGateway
 from orders.repositories import OrderData
 
@@ -42,6 +43,11 @@ def order_repository():
 @pytest.fixture
 def mock_meli_order_gateway():
     return create_autospec(MeliOrderGateway, instance=True)
+
+
+@pytest.fixture
+def mock_event_dispatcher():
+    return create_autospec(EventDispatcher, instance=True)
 
 
 @pytest.fixture

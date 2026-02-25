@@ -24,4 +24,5 @@ urlpatterns = [
     path('auth/', include('my_auth.urls')),
     path('questions/', include('questions.urls')),
     path('orders/', include('orders.urls')),
+    path('notifications/', include('notifications.urls')),
 ]

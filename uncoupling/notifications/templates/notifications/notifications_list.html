@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - MercadoLibre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .notifications-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 15px;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .notification-card.unread {
+            border-left: 4px solid #667eea;
+        }
+
+        .notification-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .notification-type {
+            background: #e7f5ff;
+            color: #1864ab;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .notification-status {
+            background: #51cf66;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #666;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Notificaciones</h1>
+            <a href="{% url 'home' %}" class="back-btn">← Volver al inicio</a>
+        </div>
+
+        {% if notifications %}
+            <div class="notifications-grid">
+                {% for notification in notifications %}
+                <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-icon">
+                        {{ notification.get_icon }}
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <div class="notification-title">{{ notification.title }}</div>
+                            <div class="notification-date">{{ notification.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                        <div class="notification-message">
+                            {{ notification.message }}
+                        </div>
+                        <div class="notification-meta">
+                            <span class="notification-type">{{ notification.type }}</span>
+                            {% if not notification.is_read %}
+                            <span class="notification-status">Nueva</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🔔</div>
+                <div class="empty-title">No hay notificaciones</div>
+                <div class="empty-text">No tienes notificaciones por el momento</div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

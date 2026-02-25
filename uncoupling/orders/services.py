@@ -5,8 +5,11 @@ from decimal import Decimal
 
 from mercadolibre.clients import MeliToken
 from my_auth.models import MeliUser
+from my_auth.services import EventDispatcher
+from orders.models import Order
 from orders.repositories import OrderRepository, OrderData, OrderItemData, PaymentData
 from orders.meli import MeliOrder, MeliOrderGateway
+from orders.events import order_synced
 
 
 logger = logging.getLogger(__name__)
@@ -18,10 +21,12 @@ class OrderSyncService:
     def __init__(
         self,
         order_repository: OrderRepository,
-        meli_gateway: MeliOrderGateway
+        meli_gateway: MeliOrderGateway,
+        event_dispatcher: EventDispatcher,
     ):
         self.order_repository = order_repository
         self.meli_gateway = meli_gateway
+        self.event_dispatcher = event_dispatcher
 
     def sync_orders(self, meli_user: MeliUser, token: MeliToken) -> int:
         """
@@ -99,7 +104,17 @@ class OrderSyncService:
             payments=payments
         )
 
-        return self.order_repository.save(order_data)
+        saved = self.order_repository.save(order_data)
+
+        self.event_dispatcher.dispatch(
+            order_synced,
+            sender=Order,
+            meli_user=meli_user,
+            order_id=order.id,
+            status=order.status,
+        )
+
+        return saved
 
     @staticmethod
     def _parse_iso_datetime(iso_string: str) -> datetime:
